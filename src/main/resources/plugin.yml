@@ -1,0 +1,16 @@
+name: World1-6TrafficLights
+version: ${project.version}
+main: com.andrew121410.mc.world16trafficlights.Main
+api-version: 1.15
+authors: [Andrew121410]
+description: A traffic light plugin that i made for private mc server
+
+commands:
+  trafficlight:
+    permission: world16trafficlights.trafficlight
+    description: lets you do the traffic light command
+
+permissions:
+  world16trafficlights.trafficlight:
+    description: lets you do the traffic light command
+    default: op
