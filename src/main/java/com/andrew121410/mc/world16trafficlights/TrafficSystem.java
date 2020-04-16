@@ -2,12 +2,14 @@ package com.andrew121410.mc.world16trafficlights;
 
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+@SerializableAs("TrafficSystem")
 public class TrafficSystem implements ConfigurationSerializable {
 
     private Main plugin;
