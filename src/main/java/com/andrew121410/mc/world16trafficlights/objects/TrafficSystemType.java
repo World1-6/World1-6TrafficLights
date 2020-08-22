@@ -1,4 +1,4 @@
-package com.andrew121410.mc.world16trafficlights;
+package com.andrew121410.mc.world16trafficlights.objects;
 
 public enum TrafficSystemType {
     ONE_LANE_ROAD,

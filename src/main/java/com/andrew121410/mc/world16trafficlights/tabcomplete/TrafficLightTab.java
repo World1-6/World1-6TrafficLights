@@ -1,8 +1,8 @@
 package com.andrew121410.mc.world16trafficlights.tabcomplete;
 
-import com.andrew121410.mc.world16trafficlights.Main;
-import com.andrew121410.mc.world16trafficlights.TrafficSystem;
-import com.andrew121410.mc.world16trafficlights.TrafficSystemType;
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
+import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.objects.TrafficSystemType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -20,9 +20,9 @@ public class TrafficLightTab implements TabCompleter {
 
     private List<String> trafficSystemTypes;
 
-    private Main plugin;
+    private World16TrafficLights plugin;
 
-    public TrafficLightTab(Main plugin) {
+    public TrafficLightTab(World16TrafficLights plugin) {
         this.plugin = plugin;
 
         this.trafficSystemMap = this.plugin.getSetListMap().getTrafficSystemMap();
@@ -32,7 +32,6 @@ public class TrafficLightTab implements TabCompleter {
 
         tabCompleteMap.add("create");
         tabCompleteMap.add("delete");
-        tabCompleteMap.add("tick");
 
         for (TrafficSystemType value : TrafficSystemType.values()) {
             this.trafficSystemTypes.add(value.name());
@@ -81,10 +80,6 @@ public class TrafficLightTab implements TabCompleter {
                 List<String> lights = new ArrayList<>();
                 trafficSystemMap.get(args[2]).getTrafficLightSystemMap().get(Integer.valueOf(args[3])).getTrafficLightMap().forEach((k, v) -> lights.add(String.valueOf(k)));
                 return getContainsString(args[4], lights);
-            }
-        } else if (args[0].equalsIgnoreCase("tick")) {
-            if (args.length == 2) {
-                return getContainsString(args[1], trafficSystemsList);
             }
         }
         return null;

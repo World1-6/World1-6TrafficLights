@@ -1,5 +1,6 @@
-package com.andrew121410.mc.world16trafficlights;
+package com.andrew121410.mc.world16trafficlights.objects;
 
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -9,19 +10,23 @@ import java.util.Map;
 @SerializableAs("TrafficLightSystem")
 public class TrafficLightSystem implements ConfigurationSerializable {
 
-    private Main plugin;
+    private World16TrafficLights plugin;
 
-    private Map<Integer, TrafficLight> trafficLightMap;
     private boolean isTurningJunction;
+    private Map<Integer, TrafficLight> trafficLightMap;
     private TrafficLightState lightState;
 
-    public TrafficLightSystem(Main plugin, boolean isTurningJunction) {
+    public TrafficLightSystem(World16TrafficLights plugin, boolean isTurningJunction, Map<Integer, TrafficLight> trafficLightMap) {
         this.plugin = plugin;
         this.isTurningJunction = isTurningJunction;
-        this.trafficLightMap = new HashMap<>();
+        this.trafficLightMap = trafficLightMap;
     }
 
-    public TrafficLightSystem(Main plugin) {
+    public TrafficLightSystem(World16TrafficLights plugin, boolean isTurningJunction) {
+        this(plugin, isTurningJunction, new HashMap<>());
+    }
+
+    public TrafficLightSystem(World16TrafficLights plugin) {
         this(plugin, false);
     }
 
@@ -34,7 +39,7 @@ public class TrafficLightSystem implements ConfigurationSerializable {
         return trafficLightMap;
     }
 
-    public Main getPlugin() {
+    public World16TrafficLights getPlugin() {
         return plugin;
     }
 
@@ -49,11 +54,12 @@ public class TrafficLightSystem implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("isTurningJunction", isTurningJunction);
+        map.put("IsTurningJunction", this.isTurningJunction);
+        map.put("TrafficLightMap", this.trafficLightMap);
         return map;
     }
 
     public static TrafficLightSystem deserialize(Map<String, Object> map) {
-        return new TrafficLightSystem(Main.getInstance(), (boolean) map.get("isTurningJunction"));
+        return new TrafficLightSystem(World16TrafficLights.getInstance(), (boolean) map.get("IsTurningJunction"), (Map<Integer, TrafficLight>) map.get("TrafficLightMap"));
     }
 }

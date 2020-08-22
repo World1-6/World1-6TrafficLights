@@ -1,11 +1,16 @@
 package com.andrew121410.mc.world16trafficlights;
 
 import com.andrew121410.mc.world16trafficlights.commands.TrafficLightCMD;
+import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemChunkSmartManager;
+import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemManager;
+import com.andrew121410.mc.world16trafficlights.objects.TrafficLight;
+import com.andrew121410.mc.world16trafficlights.objects.TrafficLightSystem;
+import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
 import com.andrew121410.mc.world16trafficlights.utils.SetListMap;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Main extends JavaPlugin {
+public final class World16TrafficLights extends JavaPlugin {
 
     static {
         ConfigurationSerialization.registerClass(TrafficSystem.class, "TrafficSystem");
@@ -13,19 +18,32 @@ public final class Main extends JavaPlugin {
         ConfigurationSerialization.registerClass(TrafficLight.class, "TrafficLight");
     }
 
-    private static Main instance;
+    private static World16TrafficLights instance;
 
     private SetListMap setListMap;
 
     private TrafficSystemManager trafficSystemManager;
 
+    //Config
+    private boolean chunkSmartManagement = false;
+
     @Override
     public void onEnable() {
         instance = this;
         this.setListMap = new SetListMap();
+        regDefaultConfig();
+
+        //Config
+        this.chunkSmartManagement = this.getConfig().getBoolean("ChunkSmartManagement");
 
         this.trafficSystemManager = new TrafficSystemManager(this);
         this.trafficSystemManager.loadAll();
+
+        if (chunkSmartManagement) {
+            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TrafficSystemChunkSmartManager(this), 200L, 200L);
+        }
+
+        regCommands();
     }
 
     @Override
@@ -37,7 +55,13 @@ public final class Main extends JavaPlugin {
         new TrafficLightCMD(this);
     }
 
-    public static Main getInstance() {
+    public void regDefaultConfig() {
+        this.getConfig().options().copyDefaults(true);
+        this.saveConfig();
+        this.reloadConfig();
+    }
+
+    public static World16TrafficLights getInstance() {
         return instance;
     }
 
@@ -47,5 +71,9 @@ public final class Main extends JavaPlugin {
 
     public TrafficSystemManager getTrafficSystemManager() {
         return trafficSystemManager;
+    }
+
+    public boolean isChunkSmartManagement() {
+        return chunkSmartManagement;
     }
 }

@@ -1,4 +1,4 @@
-package com.andrew121410.mc.world16trafficlights;
+package com.andrew121410.mc.world16trafficlights.objects;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -127,11 +127,11 @@ public class TrafficLight implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("Location", this.location);
-        map.put("isLeft", isLeft);
+        map.put("IsLeft", isLeft);
         return map;
     }
 
     public static TrafficLight deserialize(Map<String, Object> map) {
-        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("isLeft"));
+        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("IsLeft"));
     }
 }

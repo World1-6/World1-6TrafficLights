@@ -1,6 +1,8 @@
-package com.andrew121410.mc.world16trafficlights;
+package com.andrew121410.mc.world16trafficlights.objects;
 
 
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
+import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -12,26 +14,35 @@ import java.util.stream.Stream;
 @SerializableAs("TrafficSystem")
 public class TrafficSystem implements ConfigurationSerializable {
 
-    private Main plugin;
-    private int currentTick;
-    private int currentTrafficLightSystem;
-    private boolean isTicking;
-    private boolean stop;
+    private World16TrafficLights plugin;
 
-    //SAVE
+    //Saving
+    private String name;
     private TrafficSystemType trafficSystemType;
-
-    //SAVING SOLD SEPAERED
+    private Location mainChunk;
     private Map<Integer, TrafficLightSystem> trafficLightSystemMap;
 
-    public TrafficSystem(Main plugin, TrafficSystemType trafficSystemType) {
+    private boolean isTicking;
+    private int currentTick;
+    private int currentTrafficLightSystem;
+    private boolean stop;
+
+
+    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType, Map<Integer, TrafficLightSystem> trafficLightSystemMap) {
         this.plugin = plugin;
+        this.name = name.toLowerCase();
+        this.mainChunk = mainChunk;
         this.trafficSystemType = trafficSystemType;
+        this.trafficLightSystemMap = trafficLightSystemMap;
 
         this.trafficLightSystemMap = new HashMap<>();
         this.isTicking = false;
         this.currentTick = 0;
         this.stop = false;
+    }
+
+    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType) {
+        this(plugin, name, mainChunk, trafficSystemType, new HashMap<>());
     }
 
     public void tick() {
@@ -41,7 +52,11 @@ public class TrafficSystem implements ConfigurationSerializable {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (stop) this.cancel();
+                if (stop) {
+                    this.cancel();
+                    stop = false;
+                    return;
+                }
                 TrafficLightSystem trafficLightSystem = trafficLightSystemMap.get(currentTrafficLightSystem);
                 Stream<Map.Entry<Integer, TrafficLightSystem>> turningJunctions = trafficLightSystemMap.entrySet().stream().filter((k) -> k.getValue().isTurningJunction());
 
@@ -101,23 +116,23 @@ public class TrafficSystem implements ConfigurationSerializable {
                 }
                 currentTick++;
             }
-        }.runTaskTimer(this.plugin, 20, 20);
+        }.runTaskTimer(this.plugin, 20L, 20L);
     }
 
-    public Main getPlugin() {
+    public World16TrafficLights getPlugin() {
         return plugin;
     }
 
-    public void setPlugin(Main plugin) {
-        this.plugin = plugin;
+    public String getName() {
+        return name;
     }
 
     public TrafficSystemType getTrafficSystemType() {
         return trafficSystemType;
     }
 
-    public void setTrafficSystemType(TrafficSystemType trafficSystemType) {
-        this.trafficSystemType = trafficSystemType;
+    public Location getMainChunk() {
+        return mainChunk;
     }
 
     public Map<Integer, TrafficLightSystem> getTrafficLightSystemMap() {
@@ -128,6 +143,14 @@ public class TrafficSystem implements ConfigurationSerializable {
         return isTicking;
     }
 
+    public int getCurrentTick() {
+        return currentTick;
+    }
+
+    public int getCurrentTrafficLightSystem() {
+        return currentTrafficLightSystem;
+    }
+
     public void stop() {
         this.stop = true;
     }
@@ -135,11 +158,14 @@ public class TrafficSystem implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("trafficSystemType", trafficSystemType.toString());
+        map.put("Name", this.name);
+        map.put("MainChunk", this.mainChunk);
+        map.put("TrafficSystemType", this.trafficSystemType.name());
+        map.put("TrafficLightSystemMap", this.trafficLightSystemMap);
         return map;
     }
 
     public static TrafficSystem deserialize(Map<String, Object> map) {
-        return new TrafficSystem(Main.getInstance(), TrafficSystemType.valueOf((String) map.get("trafficSystemType")));
+        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("trafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
     }
 }
