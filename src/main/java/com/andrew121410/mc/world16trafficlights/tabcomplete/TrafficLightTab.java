@@ -32,6 +32,7 @@ public class TrafficLightTab implements TabCompleter {
 
         tabCompleteMap.add("create");
         tabCompleteMap.add("delete");
+        tabCompleteMap.add("tick");
 
         for (TrafficSystemType value : TrafficSystemType.values()) {
             this.trafficSystemTypes.add(value.name());
@@ -80,6 +81,10 @@ public class TrafficLightTab implements TabCompleter {
                 List<String> lights = new ArrayList<>();
                 trafficSystemMap.get(args[2]).getTrafficLightSystemMap().get(Integer.valueOf(args[3])).getTrafficLightMap().forEach((k, v) -> lights.add(String.valueOf(k)));
                 return getContainsString(args[4], lights);
+            }
+        } else if (args[0].equalsIgnoreCase("tick")) {
+            if (args.length == 2) {
+                return getContainsString(args[1], trafficSystemsList);
             }
         }
         return null;

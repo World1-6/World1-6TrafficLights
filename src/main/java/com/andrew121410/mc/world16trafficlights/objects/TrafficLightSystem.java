@@ -12,11 +12,11 @@ public class TrafficLightSystem implements ConfigurationSerializable {
 
     private World16TrafficLights plugin;
 
-    private boolean isTurningJunction;
+    private Boolean isTurningJunction;
     private Map<Integer, TrafficLight> trafficLightMap;
     private TrafficLightState lightState;
 
-    public TrafficLightSystem(World16TrafficLights plugin, boolean isTurningJunction, Map<Integer, TrafficLight> trafficLightMap) {
+    public TrafficLightSystem(World16TrafficLights plugin, Boolean isTurningJunction, Map<Integer, TrafficLight> trafficLightMap) {
         this.plugin = plugin;
         this.isTurningJunction = isTurningJunction;
         this.trafficLightMap = trafficLightMap;
@@ -60,6 +60,6 @@ public class TrafficLightSystem implements ConfigurationSerializable {
     }
 
     public static TrafficLightSystem deserialize(Map<String, Object> map) {
-        return new TrafficLightSystem(World16TrafficLights.getInstance(), (boolean) map.get("IsTurningJunction"), (Map<Integer, TrafficLight>) map.get("TrafficLightMap"));
+        return new TrafficLightSystem(World16TrafficLights.getInstance(), (Boolean) map.get("IsTurningJunction"), (Map<Integer, TrafficLight>) map.get("TrafficLightMap"));
     }
 }

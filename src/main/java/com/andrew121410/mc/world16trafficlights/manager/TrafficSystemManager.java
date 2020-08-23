@@ -63,17 +63,26 @@ public class TrafficSystemManager {
         if (trafficSystem == null) {
             throw new NullPointerException("TrafficSystem is null saveAndUnloadTrafficSystem");
         }
+        trafficSystem.stop();
         save(trafficSystem);
         this.trafficSystemMap.remove(key);
     }
 
     public void loadTrafficSystem(String key) {
         TrafficSystem trafficSystem = load(key);
+        trafficSystem.tick();
         this.trafficSystemMap.putIfAbsent(trafficSystem.getName(), trafficSystem);
     }
 
     public void deleteTrafficSystem(String key) {
         ConfigurationSection trafficLightsSection = this.trafficLightYML.getConfig().getConfigurationSection("TrafficLights");
         trafficLightsSection.set(key, null);
+        this.trafficLightYML.saveConfig();
+        TrafficSystem trafficSystem = this.trafficSystemMap.get(key);
+        trafficSystem.stop();
+        if (trafficSystem.getMainChunk() != null) {
+            this.chunkToTrafficSystemName.remove(trafficSystem.getMainChunk());
+        }
+        this.trafficSystemMap.remove(key);
     }
 }

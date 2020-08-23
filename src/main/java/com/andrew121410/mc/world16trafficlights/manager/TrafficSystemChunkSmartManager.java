@@ -4,7 +4,6 @@ import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
 import org.bukkit.Location;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class TrafficSystemChunkSmartManager implements Runnable {
@@ -22,17 +21,13 @@ public class TrafficSystemChunkSmartManager implements Runnable {
 
     @Override
     public void run() {
-        Iterator<Map.Entry<Location, String>> iterator = this.chunkToTrafficSystemName.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Location, String> entry = iterator.next();
+        for (Map.Entry<Location, String> entry : this.chunkToTrafficSystemName.entrySet()) {
             Location location = entry.getKey();
             String trafficSystemName = entry.getValue();
             boolean isChunkLoaded = location.getWorld().isChunkLoaded(location.getBlockX(), location.getBlockZ());
             if (isChunkLoaded && !this.trafficSystemMap.containsKey(trafficSystemName)) {
                 this.plugin.getTrafficSystemManager().loadTrafficSystem(trafficSystemName);
             } else if (!isChunkLoaded && this.trafficSystemMap.containsKey(trafficSystemName)) {
-                TrafficSystem trafficSystem = this.trafficSystemMap.get(trafficSystemName);
-                trafficSystem.stop();
                 this.plugin.getTrafficSystemManager().saveAndUnloadTrafficSystem(trafficSystemName);
             }
         }

@@ -1,9 +1,12 @@
 name: World1-6TrafficLights
-version: ${project.version}
+version: 1.0
 main: com.andrew121410.mc.world16trafficlights.World16TrafficLights
 api-version: 1.16
 authors: [Andrew121410]
 description: A traffic light plugin that i made for private mc server
+
+depend:
+  - World1-6Utils
 
 commands:
   trafficlight:

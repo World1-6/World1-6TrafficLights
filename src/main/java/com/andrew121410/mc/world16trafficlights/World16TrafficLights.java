@@ -13,9 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class World16TrafficLights extends JavaPlugin {
 
     static {
-        ConfigurationSerialization.registerClass(TrafficSystem.class, "TrafficSystem");
-        ConfigurationSerialization.registerClass(TrafficLightSystem.class, "TrafficLightSystem");
         ConfigurationSerialization.registerClass(TrafficLight.class, "TrafficLight");
+        ConfigurationSerialization.registerClass(TrafficLightSystem.class, "TrafficLightSystem");
+        ConfigurationSerialization.registerClass(TrafficSystem.class, "TrafficSystem");
     }
 
     private static World16TrafficLights instance;

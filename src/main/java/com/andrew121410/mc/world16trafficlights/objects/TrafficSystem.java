@@ -27,7 +27,6 @@ public class TrafficSystem implements ConfigurationSerializable {
     private int currentTrafficLightSystem;
     private boolean stop;
 
-
     public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType, Map<Integer, TrafficLightSystem> trafficLightSystemMap) {
         this.plugin = plugin;
         this.name = name.toLowerCase();
@@ -35,9 +34,9 @@ public class TrafficSystem implements ConfigurationSerializable {
         this.trafficSystemType = trafficSystemType;
         this.trafficLightSystemMap = trafficLightSystemMap;
 
-        this.trafficLightSystemMap = new HashMap<>();
         this.isTicking = false;
         this.currentTick = 0;
+        this.currentTrafficLightSystem = 0;
         this.stop = false;
     }
 
@@ -55,8 +54,10 @@ public class TrafficSystem implements ConfigurationSerializable {
                 if (stop) {
                     this.cancel();
                     stop = false;
+                    isTicking = false;
                     return;
                 }
+
                 TrafficLightSystem trafficLightSystem = trafficLightSystemMap.get(currentTrafficLightSystem);
                 Stream<Map.Entry<Integer, TrafficLightSystem>> turningJunctions = trafficLightSystemMap.entrySet().stream().filter((k) -> k.getValue().isTurningJunction());
 
@@ -166,6 +167,6 @@ public class TrafficSystem implements ConfigurationSerializable {
     }
 
     public static TrafficSystem deserialize(Map<String, Object> map) {
-        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("trafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
+        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("TrafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
     }
 }
