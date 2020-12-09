@@ -83,8 +83,8 @@ public class TrafficLightCMD implements CommandExecutor {
                 return true;
             } else if (args.length == 5 && args[1].equalsIgnoreCase("junction")) {
                 String name = args[2].toLowerCase();
-                int key = utils.asIntOrDefault(args[3], 0);
-                boolean isTurningJunction = utils.asBooleanOrDefault(args[4], false);
+                int key = Utils.asIntegerOrElse(args[3], 0);
+                boolean isTurningJunction = Utils.asBooleanOrElse(args[4], false);
 
                 TrafficSystem trafficSystem = this.trafficSystemMap.get(name);
                 if (trafficSystem == null) {
@@ -98,8 +98,8 @@ public class TrafficLightCMD implements CommandExecutor {
             } else if (args.length == 6 && args[1].equalsIgnoreCase("light")) {
                 Block block = PlayerUtils.getBlockPlayerIsLookingAt(player);
                 String name = args[2].toLowerCase();
-                int junctionName = utils.asIntOrDefault(args[3], 0);
-                int number = utils.asIntOrDefault(args[4], 0);
+                int junctionName = Utils.asIntegerOrElse(args[3], 0);
+                int number = Utils.asIntegerOrElse(args[4], 0);
                 Boolean isLeft = Boolean.valueOf(args[5]);
 
                 if (this.trafficSystemMap.get(name) == null) {
