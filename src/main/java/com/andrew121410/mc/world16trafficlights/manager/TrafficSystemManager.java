@@ -1,7 +1,7 @@
 package com.andrew121410.mc.world16trafficlights.manager;
 
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.TrafficSystem;
 import com.andrew121410.mc.world16utils.config.CustomYmlManager;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

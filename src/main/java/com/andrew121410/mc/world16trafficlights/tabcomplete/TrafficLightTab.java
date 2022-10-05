@@ -1,8 +1,8 @@
 package com.andrew121410.mc.world16trafficlights.tabcomplete;
 
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystemType;
+import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

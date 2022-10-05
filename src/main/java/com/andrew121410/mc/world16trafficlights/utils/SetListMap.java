@@ -1,6 +1,6 @@
 package com.andrew121410.mc.world16trafficlights.utils;
 
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.TrafficSystem;
 import org.bukkit.Location;
 
 import java.util.HashMap;

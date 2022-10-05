@@ -3,9 +3,6 @@ package com.andrew121410.mc.world16trafficlights;
 import com.andrew121410.mc.world16trafficlights.commands.TrafficLightCMD;
 import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemChunkSmartManager;
 import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemManager;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficLight;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficLightSystem;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
 import com.andrew121410.mc.world16trafficlights.utils.SetListMap;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +21,6 @@ public final class World16TrafficLights extends JavaPlugin {
 
     private TrafficSystemManager trafficSystemManager;
 
-    //Config
     private boolean chunkSmartManagement = false;
 
     @Override

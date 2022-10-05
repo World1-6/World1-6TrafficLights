@@ -1,5 +1,6 @@
-package com.andrew121410.mc.world16trafficlights.objects;
+package com.andrew121410.mc.world16trafficlights;
 
+import com.andrew121410.mc.world16trafficlights.enums.TrafficLightState;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -1,10 +1,10 @@
 package com.andrew121410.mc.world16trafficlights.commands;
 
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficLight;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficLightSystem;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystem;
-import com.andrew121410.mc.world16trafficlights.objects.TrafficSystemType;
+import com.andrew121410.mc.world16trafficlights.TrafficLight;
+import com.andrew121410.mc.world16trafficlights.TrafficLightSystem;
+import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import com.andrew121410.mc.world16trafficlights.tabcomplete.TrafficLightTab;
 import com.andrew121410.mc.world16utils.chat.Translate;
 import com.andrew121410.mc.world16utils.player.PlayerUtils;

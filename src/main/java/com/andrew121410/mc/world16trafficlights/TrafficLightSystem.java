@@ -1,6 +1,6 @@
-package com.andrew121410.mc.world16trafficlights.objects;
+package com.andrew121410.mc.world16trafficlights;
 
-import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
+import com.andrew121410.mc.world16trafficlights.enums.TrafficLightState;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
