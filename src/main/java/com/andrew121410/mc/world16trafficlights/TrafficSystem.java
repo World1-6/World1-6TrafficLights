@@ -15,13 +15,13 @@ import java.util.stream.Stream;
 @SerializableAs("TrafficSystem")
 public class TrafficSystem implements ConfigurationSerializable {
 
-    private World16TrafficLights plugin;
+    private final World16TrafficLights plugin;
 
     //Saving
-    private String name;
-    private TrafficSystemType trafficSystemType;
-    private Location mainChunk;
-    private Map<Integer, TrafficLightSystem> trafficLightSystemMap;
+    private final String name;
+    private final TrafficSystemType trafficSystemType;
+    private final Location mainChunk;
+    private final Map<Integer, TrafficLightSystem> trafficLightSystemMap;
 
     private boolean isTicking;
     private int currentTick;
@@ -43,6 +43,10 @@ public class TrafficSystem implements ConfigurationSerializable {
 
     public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType) {
         this(plugin, name, mainChunk, trafficSystemType, new HashMap<>());
+    }
+
+    public static TrafficSystem deserialize(Map<String, Object> map) {
+        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("TrafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
     }
 
     public void tick() {
@@ -165,9 +169,5 @@ public class TrafficSystem implements ConfigurationSerializable {
         map.put("TrafficSystemType", this.trafficSystemType.name());
         map.put("TrafficLightSystemMap", this.trafficLightSystemMap);
         return map;
-    }
-
-    public static TrafficSystem deserialize(Map<String, Object> map) {
-        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("TrafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
     }
 }

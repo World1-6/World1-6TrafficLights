@@ -1,9 +1,9 @@
 package com.andrew121410.mc.world16trafficlights.commands;
 
-import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.TrafficLight;
 import com.andrew121410.mc.world16trafficlights.TrafficLightSystem;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import com.andrew121410.mc.world16trafficlights.tabcomplete.TrafficLightTab;
 import com.andrew121410.mc.world16utils.chat.Translate;
@@ -20,11 +20,11 @@ import java.util.Map;
 
 public class TrafficLightCMD implements CommandExecutor {
 
-    private Map<String, TrafficSystem> trafficSystemMap;
+    private final Map<String, TrafficSystem> trafficSystemMap;
 
-    private World16TrafficLights plugin;
+    private final World16TrafficLights plugin;
 
-    private Utils utils;
+    private final Utils utils;
 
     public TrafficLightCMD(World16TrafficLights plugin) {
         this.plugin = plugin;
@@ -38,11 +38,10 @@ public class TrafficLightCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Only Players Can Use This Command.");
             return true;
         }
-        Player player = (Player) sender;
 
         if (!player.hasPermission("world16.trafficlight")) {
             player.sendMessage(Translate.chat("&bYou don't have permission to use this command."));

@@ -1,7 +1,7 @@
 package com.andrew121410.mc.world16trafficlights.tabcomplete;
 
-import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class TrafficLightTab implements TabCompleter {
 
-    private Map<String, TrafficSystem> trafficSystemMap;
-    private List<String> tabCompleteMap;
+    private final Map<String, TrafficSystem> trafficSystemMap;
+    private final List<String> tabCompleteMap;
 
-    private List<String> trafficSystemTypes;
+    private final List<String> trafficSystemTypes;
 
-    private World16TrafficLights plugin;
+    private final World16TrafficLights plugin;
 
     public TrafficLightTab(World16TrafficLights plugin) {
         this.plugin = plugin;
@@ -39,12 +39,23 @@ public class TrafficLightTab implements TabCompleter {
         }
     }
 
+    public static List<String> getContainsString(String args, List<String> oldArrayList) {
+        List<String> list = new ArrayList<>();
+
+        for (String mat : oldArrayList) {
+            if (mat.contains(args.toLowerCase())) {
+                list.add(mat);
+            }
+        }
+
+        return list;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String ailis, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player p)) {
             return null;
         }
-        Player p = (Player) sender;
 
         if (!cmd.getName().equalsIgnoreCase("trafficlight") || !p.hasPermission("world16.trafficlight")) {
             return null;
@@ -88,17 +99,5 @@ public class TrafficLightTab implements TabCompleter {
             }
         }
         return null;
-    }
-
-    public static List<String> getContainsString(String args, List<String> oldArrayList) {
-        List<String> list = new ArrayList<>();
-
-        for (String mat : oldArrayList) {
-            if (mat.contains(args.toLowerCase())) {
-                list.add(mat);
-            }
-        }
-
-        return list;
     }
 }

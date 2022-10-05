@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class SetListMap {
 
-    private Map<String, TrafficSystem> trafficSystemMap;
-    private Map<Location, String> chunkToTrafficSystemName;
+    private final Map<String, TrafficSystem> trafficSystemMap;
+    private final Map<Location, String> chunkToTrafficSystemName;
 
     public SetListMap() {
         this.trafficSystemMap = new HashMap<>();

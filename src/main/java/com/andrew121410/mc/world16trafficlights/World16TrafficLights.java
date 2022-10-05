@@ -9,19 +9,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class World16TrafficLights extends JavaPlugin {
 
+    private static World16TrafficLights instance;
+
     static {
         ConfigurationSerialization.registerClass(TrafficLight.class, "TrafficLight");
         ConfigurationSerialization.registerClass(TrafficLightSystem.class, "TrafficLightSystem");
         ConfigurationSerialization.registerClass(TrafficSystem.class, "TrafficSystem");
     }
 
-    private static World16TrafficLights instance;
-
     private SetListMap setListMap;
 
     private TrafficSystemManager trafficSystemManager;
 
     private boolean chunkSmartManagement = false;
+
+    public static World16TrafficLights getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -55,10 +59,6 @@ public final class World16TrafficLights extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
         this.reloadConfig();
-    }
-
-    public static World16TrafficLights getInstance() {
-        return instance;
     }
 
     public SetListMap getSetListMap() {

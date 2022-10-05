@@ -18,7 +18,7 @@ import java.util.Map;
 @SerializableAs("TrafficLight")
 public class TrafficLight implements ConfigurationSerializable {
 
-    private Location location;
+    private final Location location;
     private Boolean isLeft;
 
     public TrafficLight(Location location) {
@@ -28,6 +28,10 @@ public class TrafficLight implements ConfigurationSerializable {
     public TrafficLight(Location location, boolean isLeft) {
         this.location = location;
         this.isLeft = isLeft;
+    }
+
+    public static TrafficLight deserialize(Map<String, Object> map) {
+        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("IsLeft"));
     }
 
     public boolean doLight(TrafficLightState trafficLightState) {
@@ -130,9 +134,5 @@ public class TrafficLight implements ConfigurationSerializable {
         map.put("Location", this.location);
         map.put("IsLeft", isLeft);
         return map;
-    }
-
-    public static TrafficLight deserialize(Map<String, Object> map) {
-        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("IsLeft"));
     }
 }

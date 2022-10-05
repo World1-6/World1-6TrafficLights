@@ -1,7 +1,7 @@
 package com.andrew121410.mc.world16trafficlights.manager;
 
-import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16utils.config.CustomYmlManager;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class TrafficSystemManager {
 
-    private Map<String, TrafficSystem> trafficSystemMap;
-    private Map<Location, String> chunkToTrafficSystemName;
+    private final Map<String, TrafficSystem> trafficSystemMap;
+    private final Map<Location, String> chunkToTrafficSystemName;
 
-    private World16TrafficLights plugin;
-    private CustomYmlManager trafficLightYML;
+    private final World16TrafficLights plugin;
+    private final CustomYmlManager trafficLightYML;
 
     public TrafficSystemManager(World16TrafficLights plugin) {
         this.plugin = plugin;

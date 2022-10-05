@@ -1,17 +1,17 @@
 package com.andrew121410.mc.world16trafficlights.manager;
 
-import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
+import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import org.bukkit.Location;
 
 import java.util.Map;
 
 public class TrafficSystemChunkSmartManager implements Runnable {
 
-    private Map<String, TrafficSystem> trafficSystemMap;
-    private Map<Location, String> chunkToTrafficSystemName;
+    private final Map<String, TrafficSystem> trafficSystemMap;
+    private final Map<Location, String> chunkToTrafficSystemName;
 
-    private World16TrafficLights plugin;
+    private final World16TrafficLights plugin;
 
     public TrafficSystemChunkSmartManager(World16TrafficLights plugin) {
         this.plugin = plugin;
