@@ -4,6 +4,7 @@ import com.andrew121410.mc.world16trafficlights.commands.TrafficLightCMD;
 import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemChunkSmartManager;
 import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemManager;
 import com.andrew121410.mc.world16trafficlights.utils.SetListMap;
+import com.andrew121410.mc.world16utils.updater.UpdateManager;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,6 +45,8 @@ public final class World16TrafficLights extends JavaPlugin {
         }
 
         regCommands();
+
+        UpdateManager.registerUpdater(this, new com.andrew121410.mc.world16trafficlights.Updater(this));
     }
 
     @Override
