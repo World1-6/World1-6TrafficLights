@@ -72,7 +72,7 @@ public class TrafficLight implements ConfigurationSerializable {
         if (isBanner()) {
             Banner banner = (Banner) location.getBlock().getState();
             List<Pattern> patterns = new ArrayList<>();
-            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.CIRCLE_MIDDLE));
+            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.GLOBE)); // CIRCLE_MIDDLE
             banner.setPatterns(patterns);
             banner.update();
         } else {
