@@ -13,13 +13,9 @@ public enum TrafficSystemType {
     FOUR_LANE_ROAD_TURNING_LANE;
 
     public boolean hasTurningLane() {
-        switch (this) {
-            case TWO_LANE_ROAD_TURNING_LANE:
-            case THREE_LANE_ROAD_TURNING_LANE:
-            case FOUR_LANE_ROAD_TURNING_LANE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TWO_LANE_ROAD_TURNING_LANE, THREE_LANE_ROAD_TURNING_LANE, FOUR_LANE_ROAD_TURNING_LANE -> true;
+            default -> false;
+        };
     }
 }

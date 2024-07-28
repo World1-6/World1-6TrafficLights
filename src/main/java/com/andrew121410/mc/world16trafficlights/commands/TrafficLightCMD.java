@@ -1,7 +1,7 @@
 package com.andrew121410.mc.world16trafficlights.commands;
 
+import com.andrew121410.mc.world16trafficlights.TrafficJunctionBox;
 import com.andrew121410.mc.world16trafficlights.TrafficLight;
-import com.andrew121410.mc.world16trafficlights.TrafficLightSystem;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
 import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
@@ -58,7 +58,12 @@ public class TrafficLightCMD implements CommandExecutor {
                 player.sendMessage(Translate.chat("&6/trafficlight create junction <Name> <Int> <isTurningJunction"));
                 player.sendMessage(Translate.chat("&6/trafficlight create light <Name> <Junction> <Int> <O isLeft"));
                 return true;
-            } else if (args.length == 4 && args[1].equalsIgnoreCase("system")) {
+            } else if (args[1].equalsIgnoreCase("system")) {
+                if (args.length != 4) {
+                    player.sendMessage(Translate.chat("&6/trafficlight create system <Name> <Type>"));
+                    return true;
+                }
+
                 String name = args[2].toLowerCase();
                 String rawType = args[3];
 
@@ -70,7 +75,7 @@ public class TrafficLightCMD implements CommandExecutor {
                     return true;
                 }
 
-                if (this.trafficSystemMap.get(name) != null) {
+                if (this.trafficSystemMap.containsKey(name)) {
                     player.sendMessage(Translate.chat("Looks like that traffic light system already exists with that name."));
                     return true;
                 }
@@ -80,7 +85,12 @@ public class TrafficLightCMD implements CommandExecutor {
                 this.trafficSystemMap.put(name, new TrafficSystem(this.plugin, name, chunkLoc, trafficSystemType));
                 player.sendMessage(Translate.chat(name + " traffic system has been added."));
                 return true;
-            } else if (args.length == 5 && args[1].equalsIgnoreCase("junction")) {
+            } else if (args[1].equalsIgnoreCase("junction")) {
+                if (args.length != 5) {
+                    player.sendMessage(Translate.chat("&6/trafficlight create junction <Name> <Int> <isTurningJunction"));
+                    return true;
+                }
+
                 String name = args[2].toLowerCase();
                 int key = Utils.asIntegerOrElse(args[3], 0);
                 boolean isTurningJunction = Utils.asBooleanOrElse(args[4], false);
@@ -91,27 +101,32 @@ public class TrafficLightCMD implements CommandExecutor {
                     return true;
                 }
 
-                trafficSystem.getTrafficLightSystemMap().putIfAbsent(key, new TrafficLightSystem(plugin, isTurningJunction));
+                trafficSystem.getTrafficJunctionBoxMap().putIfAbsent(key, new TrafficJunctionBox(plugin, isTurningJunction));
                 player.sendMessage(Translate.chat("Junction box has been added to: " + name));
                 return true;
-            } else if (args.length == 6 && args[1].equalsIgnoreCase("light")) {
+            } else if (args[1].equalsIgnoreCase("light")) {
+                if (args.length != 6) {
+                    player.sendMessage(Translate.chat("&6/trafficlight create light <Name> <Junction> <Int> <IsLeft>"));
+                    return true;
+                }
+
                 Block block = PlayerUtils.getBlockPlayerIsLookingAt(player);
                 String name = args[2].toLowerCase();
                 int junctionName = Utils.asIntegerOrElse(args[3], 0);
                 int number = Utils.asIntegerOrElse(args[4], 0);
-                Boolean isLeft = Boolean.valueOf(args[5]);
+                Boolean isLeft = Utils.asBooleanOrElse(args[5], false);
 
                 if (this.trafficSystemMap.get(name) == null) {
                     player.sendMessage(Translate.chat("Looks like that isn't a valid traffic system"));
                     return true;
                 }
 
-                if (this.trafficSystemMap.get(name).getTrafficLightSystemMap().get(junctionName) == null) {
+                if (this.trafficSystemMap.get(name).getTrafficJunctionBoxMap().get(junctionName) == null) {
                     player.sendMessage(Translate.chat("Looks like that isn't a valid junction"));
                     return true;
                 }
 
-                this.trafficSystemMap.get(name).getTrafficLightSystemMap().get(junctionName).getTrafficLightMap().put(number, new TrafficLight(block.getLocation(), isLeft));
+                this.trafficSystemMap.get(name).getTrafficJunctionBoxMap().get(junctionName).getTrafficLightMap().put(number, new TrafficLight(block.getLocation(), isLeft));
                 player.sendMessage(Translate.chat("The traffic light has been added to junction: " + junctionName + " to traffic system: " + name));
                 return true;
             }
@@ -141,12 +156,12 @@ public class TrafficLightCMD implements CommandExecutor {
                     return true;
                 }
 
-                if (trafficSystem.getTrafficLightSystemMap().get(Integer.valueOf(junctionKey)) == null) {
+                if (trafficSystem.getTrafficJunctionBoxMap().get(Integer.valueOf(junctionKey)) == null) {
                     player.sendMessage(Translate.chat("Looks like that isn't a vaild junction."));
                     return true;
                 }
 
-                trafficSystem.getTrafficLightSystemMap().remove(Integer.valueOf(junctionKey));
+                trafficSystem.getTrafficJunctionBoxMap().remove(Integer.valueOf(junctionKey));
                 player.sendMessage(Translate.chat("The junction has been deleted for: " + name));
             } else if (args[1].equalsIgnoreCase("light") && args.length == 5) {
                 String name = args[2].toLowerCase();
@@ -159,20 +174,25 @@ public class TrafficLightCMD implements CommandExecutor {
                     return true;
                 }
 
-                if (trafficSystem.getTrafficLightSystemMap().get(Integer.valueOf(junctionKey)) == null) {
+                if (trafficSystem.getTrafficJunctionBoxMap().get(Integer.valueOf(junctionKey)) == null) {
                     player.sendMessage(Translate.chat("Looks like that isn't a vaild junction."));
                     return true;
                 }
 
-                if (trafficSystem.getTrafficLightSystemMap().get(Integer.valueOf(junctionKey)).getTrafficLightMap().get(Integer.valueOf(lightKey)) == null) {
+                if (trafficSystem.getTrafficJunctionBoxMap().get(Integer.valueOf(junctionKey)).getTrafficLightMap().get(Integer.valueOf(lightKey)) == null) {
                     player.sendMessage(Translate.chat("Looks like that isn't a vaild light"));
                     return true;
                 }
 
-                trafficSystem.getTrafficLightSystemMap().get(Integer.valueOf(junctionKey)).getTrafficLightMap().remove(Integer.valueOf(lightKey));
+                trafficSystem.getTrafficJunctionBoxMap().get(Integer.valueOf(junctionKey)).getTrafficLightMap().remove(Integer.valueOf(lightKey));
                 player.sendMessage(Translate.chat("The light has been deleted."));
             }
         } else if (args[0].equalsIgnoreCase("tick")) {
+            if (args.length != 2) {
+                player.sendMessage(Translate.chat("&6/trafficlight tick <Name>"));
+                return true;
+            }
+
             String name = args[1].toLowerCase();
 
             TrafficSystem trafficSystem = this.trafficSystemMap.get(name);

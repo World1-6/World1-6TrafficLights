@@ -4,16 +4,13 @@ package com.andrew121410.mc.world16trafficlights;
 import com.andrew121410.mc.world16trafficlights.enums.TrafficLightState;
 import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@SerializableAs("TrafficSystem")
-public class TrafficSystem implements ConfigurationSerializable {
+public class TrafficSystem {
 
     private final World16TrafficLights plugin;
 
@@ -21,32 +18,28 @@ public class TrafficSystem implements ConfigurationSerializable {
     private final String name;
     private final TrafficSystemType trafficSystemType;
     private final Location mainChunk;
-    private final Map<Integer, TrafficLightSystem> trafficLightSystemMap;
+    private final Map<Integer, TrafficJunctionBox> trafficJunctionBoxMap;
 
     private boolean isTicking;
     private int currentTick;
-    private int currentTrafficLightSystem;
+    private int currentJunctionBox;
     private boolean stop;
 
-    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType, Map<Integer, TrafficLightSystem> trafficLightSystemMap) {
+    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType, Map<Integer, TrafficJunctionBox> trafficJunctionBoxMap) {
         this.plugin = plugin;
         this.name = name.toLowerCase();
         this.mainChunk = mainChunk;
         this.trafficSystemType = trafficSystemType;
-        this.trafficLightSystemMap = trafficLightSystemMap;
+        this.trafficJunctionBoxMap = trafficJunctionBoxMap;
 
         this.isTicking = false;
         this.currentTick = 0;
-        this.currentTrafficLightSystem = 0;
+        this.currentJunctionBox = 0;
         this.stop = false;
     }
 
     public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType) {
         this(plugin, name, mainChunk, trafficSystemType, new HashMap<>());
-    }
-
-    public static TrafficSystem deserialize(Map<String, Object> map) {
-        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("TrafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
     }
 
     public void tick() {
@@ -63,10 +56,10 @@ public class TrafficSystem implements ConfigurationSerializable {
                     return;
                 }
 
-                TrafficLightSystem trafficLightSystem = trafficLightSystemMap.get(currentTrafficLightSystem);
-                Stream<Map.Entry<Integer, TrafficLightSystem>> turningJunctions = trafficLightSystemMap.entrySet().stream().filter((k) -> k.getValue().isTurningJunction());
+                TrafficJunctionBox trafficJunctionBox = trafficJunctionBoxMap.get(currentJunctionBox);
+                Stream<Map.Entry<Integer, TrafficJunctionBox>> turningJunctions = trafficJunctionBoxMap.entrySet().stream().filter((k) -> k.getValue().isTurningJunction());
 
-                if (trafficLightSystem == null) {
+                if (trafficJunctionBox == null) {
                     return;
                 }
 
@@ -74,16 +67,16 @@ public class TrafficSystem implements ConfigurationSerializable {
                     //ONLY RUN ONE TIME.
                     if (currentTick == 0) {
                         //GREEN
-                        trafficLightSystem.doLight(TrafficLightState.GREEN);
-                        trafficLightSystemMap.entrySet().stream().filter(key -> key.getKey() != currentTrafficLightSystem).forEach((k -> k.getValue().doLight(TrafficLightState.RED)));
+                        trafficJunctionBox.doLight(TrafficLightState.GREEN);
+                        trafficJunctionBoxMap.entrySet().stream().filter(key -> key.getKey() != currentJunctionBox).forEach((k -> k.getValue().doLight(TrafficLightState.RED)));
                     }
                 } else if (currentTick <= 15) {
                     //YELLOW
                     //ONLY RUN ONE TIME
                     if (currentTick == 11) {
-                        trafficLightSystem.doLight(TrafficLightState.YELLOW);
+                        trafficJunctionBox.doLight(TrafficLightState.YELLOW);
                     } else if (trafficSystemType.hasTurningLane() && currentTick == 15) {
-                        trafficLightSystem.doLight(TrafficLightState.RED);
+                        trafficJunctionBox.doLight(TrafficLightState.RED);
                     }
                 } else if (trafficSystemType.hasTurningLane() && currentTick <= 26) {
                     if (currentTick == 16) {
@@ -112,10 +105,10 @@ public class TrafficSystem implements ConfigurationSerializable {
 
                 } else {
                     //RED
-                    trafficLightSystem.doLight(TrafficLightState.RED);
+                    trafficJunctionBox.doLight(TrafficLightState.RED);
 
-                    if (currentTrafficLightSystem == 0) currentTrafficLightSystem = 1;
-                    else if (currentTrafficLightSystem == 1) currentTrafficLightSystem = 0;
+                    if (currentJunctionBox == 0) currentJunctionBox = 1;
+                    else if (currentJunctionBox == 1) currentJunctionBox = 0;
 
                     currentTick = 0;
                     return;
@@ -141,8 +134,8 @@ public class TrafficSystem implements ConfigurationSerializable {
         return mainChunk;
     }
 
-    public Map<Integer, TrafficLightSystem> getTrafficLightSystemMap() {
-        return trafficLightSystemMap;
+    public Map<Integer, TrafficJunctionBox> getTrafficJunctionBoxMap() {
+        return trafficJunctionBoxMap;
     }
 
     public boolean isTicking() {
@@ -153,21 +146,11 @@ public class TrafficSystem implements ConfigurationSerializable {
         return currentTick;
     }
 
-    public int getCurrentTrafficLightSystem() {
-        return currentTrafficLightSystem;
+    public int getCurrentJunctionBox() {
+        return currentJunctionBox;
     }
 
     public void stop() {
         this.stop = true;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("Name", this.name);
-        map.put("MainChunk", this.mainChunk);
-        map.put("TrafficSystemType", this.trafficSystemType.name());
-        map.put("TrafficLightSystemMap", this.trafficLightSystemMap);
-        return map;
     }
 }

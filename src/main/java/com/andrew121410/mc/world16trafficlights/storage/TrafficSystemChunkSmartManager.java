@@ -1,4 +1,4 @@
-package com.andrew121410.mc.world16trafficlights.manager;
+package com.andrew121410.mc.world16trafficlights.storage;
 
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;

@@ -1,24 +1,17 @@
 package com.andrew121410.mc.world16trafficlights;
 
 import com.andrew121410.mc.world16trafficlights.commands.TrafficLightCMD;
-import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemChunkSmartManager;
-import com.andrew121410.mc.world16trafficlights.manager.TrafficSystemManager;
-import com.andrew121410.mc.world16trafficlights.utils.SetListMap;
+import com.andrew121410.mc.world16trafficlights.storage.TrafficSystemChunkSmartManager;
+import com.andrew121410.mc.world16trafficlights.storage.TrafficSystemManager;
+import com.andrew121410.mc.world16trafficlights.utils.MemoryHolder;
 import com.andrew121410.mc.world16utils.updater.UpdateManager;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class World16TrafficLights extends JavaPlugin {
 
     private static World16TrafficLights instance;
 
-    static {
-        ConfigurationSerialization.registerClass(TrafficLight.class, "TrafficLight");
-        ConfigurationSerialization.registerClass(TrafficLightSystem.class, "TrafficLightSystem");
-        ConfigurationSerialization.registerClass(TrafficSystem.class, "TrafficSystem");
-    }
-
-    private SetListMap setListMap;
+    private MemoryHolder memoryHolder;
 
     private TrafficSystemManager trafficSystemManager;
 
@@ -31,7 +24,7 @@ public final class World16TrafficLights extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        this.setListMap = new SetListMap();
+        this.memoryHolder = new MemoryHolder();
         regDefaultConfig();
 
         //Config
@@ -64,8 +57,8 @@ public final class World16TrafficLights extends JavaPlugin {
         this.reloadConfig();
     }
 
-    public SetListMap getSetListMap() {
-        return setListMap;
+    public MemoryHolder getSetListMap() {
+        return memoryHolder;
     }
 
     public TrafficSystemManager getTrafficSystemManager() {

@@ -7,16 +7,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@SerializableAs("TrafficLight")
-public class TrafficLight implements ConfigurationSerializable {
+public class TrafficLight {
 
     private final Location location;
     private Boolean isLeft;
@@ -28,10 +23,6 @@ public class TrafficLight implements ConfigurationSerializable {
     public TrafficLight(Location location, boolean isLeft) {
         this.location = location;
         this.isLeft = isLeft;
-    }
-
-    public static TrafficLight deserialize(Map<String, Object> map) {
-        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("IsLeft"));
     }
 
     public boolean doLight(TrafficLightState trafficLightState) {
@@ -72,7 +63,8 @@ public class TrafficLight implements ConfigurationSerializable {
         if (isBanner()) {
             Banner banner = (Banner) location.getBlock().getState();
             List<Pattern> patterns = new ArrayList<>();
-            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.GLOBE)); // CIRCLE_MIDDLE
+            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.CIRCLE));
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.BORDER));
             banner.setPatterns(patterns);
             banner.update();
         } else {
@@ -126,13 +118,5 @@ public class TrafficLight implements ConfigurationSerializable {
 
     public Boolean isLeft() {
         return isLeft;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("Location", this.location);
-        map.put("IsLeft", isLeft);
-        return map;
     }
 }
