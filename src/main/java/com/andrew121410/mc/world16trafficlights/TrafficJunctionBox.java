@@ -9,22 +9,16 @@ public class TrafficJunctionBox {
 
     private final World16TrafficLights plugin;
 
-    private final Boolean isTurningJunction;
     private final Map<Integer, TrafficLight> trafficLightMap;
     private TrafficLightState lightState;
 
-    public TrafficJunctionBox(World16TrafficLights plugin, Boolean isTurningJunction, Map<Integer, TrafficLight> trafficLightMap) {
+    public TrafficJunctionBox(World16TrafficLights plugin, Map<Integer, TrafficLight> trafficLightMap) {
         this.plugin = plugin;
-        this.isTurningJunction = isTurningJunction;
         this.trafficLightMap = trafficLightMap;
     }
 
-    public TrafficJunctionBox(World16TrafficLights plugin, boolean isTurningJunction) {
-        this(plugin, isTurningJunction, new HashMap<>());
-    }
-
     public TrafficJunctionBox(World16TrafficLights plugin) {
-        this(plugin, false);
+        this(plugin, new HashMap<>());
     }
 
     public void doLight(TrafficLightState trafficLightState) {
@@ -42,9 +36,5 @@ public class TrafficJunctionBox {
 
     public TrafficLightState getLightState() {
         return lightState;
-    }
-
-    public boolean isTurningJunction() {
-        return isTurningJunction;
     }
 }

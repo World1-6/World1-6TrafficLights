@@ -20,12 +20,11 @@ public class TrafficJunctionBoxSerializer implements TypeSerializer<TrafficJunct
             return null;
         }
 
-        Boolean isTurningJunction = SerializerUtils.nonVirtualNode(node, "IsTurningJunction").get(Boolean.class);
         TypeToken<Map<Integer, TrafficLight>> trafficLightMapTypeToken = new TypeToken<>() {
         };
         Map<Integer, TrafficLight> trafficLightMap = SerializerUtils.nonVirtualNode(node, "TrafficLightMap").get(trafficLightMapTypeToken);
 
-        return new TrafficJunctionBox(World16TrafficLights.getInstance(), isTurningJunction, trafficLightMap);
+        return new TrafficJunctionBox(World16TrafficLights.getInstance(), trafficLightMap);
     }
 
     @Override
@@ -35,7 +34,6 @@ public class TrafficJunctionBoxSerializer implements TypeSerializer<TrafficJunct
             return;
         }
 
-        node.node("IsTurningJunction").set(obj.isTurningJunction());
         TypeToken<Map<Integer, TrafficLight>> trafficLightMapTypeToken = new TypeToken<>() {
         };
         node.node("TrafficLightMap").set(trafficLightMapTypeToken, obj.getTrafficLightMap());

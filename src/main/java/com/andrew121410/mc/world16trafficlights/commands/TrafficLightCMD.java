@@ -4,7 +4,6 @@ import com.andrew121410.mc.world16trafficlights.TrafficJunctionBox;
 import com.andrew121410.mc.world16trafficlights.TrafficLight;
 import com.andrew121410.mc.world16trafficlights.TrafficSystem;
 import com.andrew121410.mc.world16trafficlights.World16TrafficLights;
-import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import com.andrew121410.mc.world16trafficlights.tabcomplete.TrafficLightTab;
 import com.andrew121410.mc.world16utils.chat.Translate;
 import com.andrew121410.mc.world16utils.player.PlayerUtils;
@@ -59,21 +58,12 @@ public class TrafficLightCMD implements CommandExecutor {
                 player.sendMessage(Translate.chat("&6/trafficlight create light <Name> <Junction> <Int> <O isLeft"));
                 return true;
             } else if (args[1].equalsIgnoreCase("system")) {
-                if (args.length != 4) {
-                    player.sendMessage(Translate.chat("&6/trafficlight create system <Name> <Type>"));
+                if (args.length != 3) {
+                    player.sendMessage(Translate.chat("&6/trafficlight create system <Name>"));
                     return true;
                 }
 
                 String name = args[2].toLowerCase();
-                String rawType = args[3];
-
-                TrafficSystemType trafficSystemType;
-                try {
-                    trafficSystemType = TrafficSystemType.valueOf(rawType);
-                } catch (Exception e) {
-                    player.sendMessage(Translate.chat("Not a valid TrafficSystemType"));
-                    return true;
-                }
 
                 if (this.trafficSystemMap.containsKey(name)) {
                     player.sendMessage(Translate.chat("Looks like that traffic light system already exists with that name."));
@@ -82,18 +72,17 @@ public class TrafficLightCMD implements CommandExecutor {
 
                 Location location = player.getLocation().clone();
                 Location chunkLoc = new Location(location.getWorld(), location.getChunk().getX(), 0, location.getChunk().getZ());
-                this.trafficSystemMap.put(name, new TrafficSystem(this.plugin, name, chunkLoc, trafficSystemType));
+                this.trafficSystemMap.put(name, new TrafficSystem(this.plugin, name, chunkLoc));
                 player.sendMessage(Translate.chat(name + " traffic system has been added."));
                 return true;
             } else if (args[1].equalsIgnoreCase("junction")) {
-                if (args.length != 5) {
-                    player.sendMessage(Translate.chat("&6/trafficlight create junction <Name> <Int> <isTurningJunction"));
+                if (args.length != 4) {
+                    player.sendMessage(Translate.chat("&6/trafficlight create junction <Name> <key:Int>"));
                     return true;
                 }
 
                 String name = args[2].toLowerCase();
                 int key = Utils.asIntegerOrElse(args[3], 0);
-                boolean isTurningJunction = Utils.asBooleanOrElse(args[4], false);
 
                 TrafficSystem trafficSystem = this.trafficSystemMap.get(name);
                 if (trafficSystem == null) {
@@ -101,7 +90,18 @@ public class TrafficLightCMD implements CommandExecutor {
                     return true;
                 }
 
-                trafficSystem.getTrafficJunctionBoxMap().putIfAbsent(key, new TrafficJunctionBox(plugin, isTurningJunction));
+                // key must be 0 if first junction and 1 if second junction. Can't have more than 2 junctions.
+                if (key != 0 && key != 1) {
+                    player.sendMessage(Translate.chat("The junction key must be 0 or 1"));
+                    return true;
+                }
+
+                if (trafficSystem.getTrafficJunctionBoxMap().containsKey(key)) {
+                    player.sendMessage(Translate.chat("Looks like " + key + " already exists in the traffic system."));
+                    return true;
+                }
+
+                trafficSystem.getTrafficJunctionBoxMap().putIfAbsent(key, new TrafficJunctionBox(plugin));
                 player.sendMessage(Translate.chat("Junction box has been added to: " + name));
                 return true;
             } else if (args[1].equalsIgnoreCase("light")) {
