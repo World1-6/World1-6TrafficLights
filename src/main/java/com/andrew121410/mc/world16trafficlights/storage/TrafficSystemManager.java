@@ -8,9 +8,9 @@ import com.andrew121410.mc.world16trafficlights.storage.serializers.TrafficJunct
 import com.andrew121410.mc.world16trafficlights.storage.serializers.TrafficLightSerializer;
 import com.andrew121410.mc.world16trafficlights.storage.serializers.TrafficSystemSerializer;
 import com.andrew121410.mc.world16utils.config.World16ConfigurateManager;
-import com.andrew121410.mc.world16utils.utils.spongepowered.configurate.CommentedConfigurationNode;
-import com.andrew121410.mc.world16utils.utils.spongepowered.configurate.serialize.TypeSerializerCollection;
-import com.andrew121410.mc.world16utils.utils.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import com.andrew121410.mc.world16utils.dependencies.spongepowered.configurate.CommentedConfigurationNode;
+import com.andrew121410.mc.world16utils.dependencies.spongepowered.configurate.serialize.TypeSerializerCollection;
+import com.andrew121410.mc.world16utils.dependencies.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 
