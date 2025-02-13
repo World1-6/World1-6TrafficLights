@@ -6,12 +6,12 @@ import org.bukkit.Location;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SetListMap {
+public class MemoryHolder {
 
     private final Map<String, TrafficSystem> trafficSystemMap;
     private final Map<Location, String> chunkToTrafficSystemName;
 
-    public SetListMap() {
+    public MemoryHolder() {
         this.trafficSystemMap = new HashMap<>();
         this.chunkToTrafficSystemName = new HashMap<>();
     }

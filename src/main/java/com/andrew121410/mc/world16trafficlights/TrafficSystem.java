@@ -2,51 +2,40 @@ package com.andrew121410.mc.world16trafficlights;
 
 
 import com.andrew121410.mc.world16trafficlights.enums.TrafficLightState;
-import com.andrew121410.mc.world16trafficlights.enums.TrafficSystemType;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-@SerializableAs("TrafficSystem")
-public class TrafficSystem implements ConfigurationSerializable {
+public class TrafficSystem {
 
     private final World16TrafficLights plugin;
 
     //Saving
     private final String name;
-    private final TrafficSystemType trafficSystemType;
     private final Location mainChunk;
-    private final Map<Integer, TrafficLightSystem> trafficLightSystemMap;
+    private final Map<Integer, TrafficJunctionBox> trafficJunctionBoxMap;
 
     private boolean isTicking;
     private int currentTick;
-    private int currentTrafficLightSystem;
+    private int currentJunctionBox;
     private boolean stop;
 
-    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType, Map<Integer, TrafficLightSystem> trafficLightSystemMap) {
+    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, Map<Integer, TrafficJunctionBox> trafficJunctionBoxMap) {
         this.plugin = plugin;
         this.name = name.toLowerCase();
         this.mainChunk = mainChunk;
-        this.trafficSystemType = trafficSystemType;
-        this.trafficLightSystemMap = trafficLightSystemMap;
+        this.trafficJunctionBoxMap = trafficJunctionBoxMap;
 
         this.isTicking = false;
         this.currentTick = 0;
-        this.currentTrafficLightSystem = 0;
+        this.currentJunctionBox = 0;
         this.stop = false;
     }
 
-    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk, TrafficSystemType trafficSystemType) {
-        this(plugin, name, mainChunk, trafficSystemType, new HashMap<>());
-    }
-
-    public static TrafficSystem deserialize(Map<String, Object> map) {
-        return new TrafficSystem(World16TrafficLights.getInstance(), (String) map.get("Name"), (Location) map.get("MainChunk"), TrafficSystemType.valueOf((String) map.get("TrafficSystemType")), (Map<Integer, TrafficLightSystem>) map.get("TrafficLightSystemMap"));
+    public TrafficSystem(World16TrafficLights plugin, String name, Location mainChunk) {
+        this(plugin, name, mainChunk, new HashMap<>());
     }
 
     public void tick() {
@@ -63,60 +52,52 @@ public class TrafficSystem implements ConfigurationSerializable {
                     return;
                 }
 
-                TrafficLightSystem trafficLightSystem = trafficLightSystemMap.get(currentTrafficLightSystem);
-                Stream<Map.Entry<Integer, TrafficLightSystem>> turningJunctions = trafficLightSystemMap.entrySet().stream().filter((k) -> k.getValue().isTurningJunction());
+                TrafficJunctionBox trafficJunctionBox = trafficJunctionBoxMap.get(currentJunctionBox);
 
-                if (trafficLightSystem == null) {
+                if (trafficJunctionBox == null) {
+                    World16TrafficLights.getInstance().getLogger().warning("TrafficJunctionBox is null for TrafficSystem: " + name);
                     return;
                 }
 
+                // Get the left-turning lights.
+                Map<Integer, TrafficLight> leftTurningLights = new HashMap<>();
+                for (Map.Entry<Integer, TrafficLight> entry : trafficJunctionBox.getTrafficLightMap().entrySet()) {
+                    if (entry.getValue().isLeft()) {
+                        leftTurningLights.put(entry.getKey(), entry.getValue());
+                    }
+                }
+
                 if (currentTick <= 10) {
-                    //ONLY RUN ONE TIME.
                     if (currentTick == 0) {
-                        //GREEN
-                        trafficLightSystem.doLight(TrafficLightState.GREEN);
-                        trafficLightSystemMap.entrySet().stream().filter(key -> key.getKey() != currentTrafficLightSystem).forEach((k -> k.getValue().doLight(TrafficLightState.RED)));
+                        // Turn all non-left-turn lights to green.
+                        trafficJunctionBox.getTrafficLightMap().values().stream()
+                                .filter(light -> !light.isLeft())
+                                .forEach(light -> light.doLight(TrafficLightState.GREEN));
+
+                        // Start blinking yellow for left-turn lights
+                        leftTurningLights.values().forEach(TrafficLight::turn_left);
+
+                        // Set all other junction boxes to red.
+                        trafficJunctionBoxMap.entrySet().stream()
+                                .filter(entry -> entry.getKey() != currentJunctionBox)
+                                .forEach(entry -> entry.getValue().doLight(TrafficLightState.RED));
+                    } else {
+                        // Continue blinking yellow for left-turn lights
+                        if (currentTick % 2 == 0) {
+                            leftTurningLights.values().forEach(TrafficLight::off);
+                        } else {
+                            leftTurningLights.values().forEach(TrafficLight::turn_left);
+                        }
                     }
                 } else if (currentTick <= 15) {
-                    //YELLOW
-                    //ONLY RUN ONE TIME
-                    if (currentTick == 11) {
-                        trafficLightSystem.doLight(TrafficLightState.YELLOW);
-                    } else if (trafficSystemType.hasTurningLane() && currentTick == 15) {
-                        trafficLightSystem.doLight(TrafficLightState.RED);
-                    }
-                } else if (trafficSystemType.hasTurningLane() && currentTick <= 26) {
-                    if (currentTick == 16) {
-                        turningJunctions.forEach((k) -> k.getValue().doLight(TrafficLightState.TURN));
-                    } else if (currentTick == 17) {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.off()));
-                    } else if (currentTick == 18) {
-                        turningJunctions.forEach((k) -> k.getValue().doLight(TrafficLightState.TURN));
-                    } else if (currentTick == 19) {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.off()));
-                    } else if (currentTick == 20) {
-                        turningJunctions.forEach((k) -> k.getValue().doLight(TrafficLightState.TURN));
-                    } else if (currentTick == 21) {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.off()));
-                    } else if (currentTick == 22) {
-                        turningJunctions.forEach((k) -> k.getValue().doLight(TrafficLightState.TURN));
-                    } else if (currentTick == 23) {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.off()));
-                    } else if (currentTick == 24) {
-                        turningJunctions.forEach((k) -> k.getValue().doLight(TrafficLightState.TURN));
-                    } else if (currentTick == 25) {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.yellow()));
-                    } else {
-                        turningJunctions.forEach((k) -> k.getValue().getTrafficLightMap().forEach((k1, v1) -> v1.yellow()));
-                    }
-
+                    // Set all lights to solid yellow
+                    trafficJunctionBox.getTrafficLightMap().values().forEach(TrafficLight::yellow);
+                } else if (currentTick <= 17) {
+                    // Set all lights to red
+                    trafficJunctionBox.getTrafficLightMap().values().forEach(TrafficLight::red);
                 } else {
-                    //RED
-                    trafficLightSystem.doLight(TrafficLightState.RED);
-
-                    if (currentTrafficLightSystem == 0) currentTrafficLightSystem = 1;
-                    else if (currentTrafficLightSystem == 1) currentTrafficLightSystem = 0;
-
+                    // Switch to the next junction box should be either 0 or 1
+                    currentJunctionBox = currentJunctionBox == 0 ? 1 : 0;
                     currentTick = 0;
                     return;
                 }
@@ -133,16 +114,12 @@ public class TrafficSystem implements ConfigurationSerializable {
         return name;
     }
 
-    public TrafficSystemType getTrafficSystemType() {
-        return trafficSystemType;
-    }
-
     public Location getMainChunk() {
         return mainChunk;
     }
 
-    public Map<Integer, TrafficLightSystem> getTrafficLightSystemMap() {
-        return trafficLightSystemMap;
+    public Map<Integer, TrafficJunctionBox> getTrafficJunctionBoxMap() {
+        return trafficJunctionBoxMap;
     }
 
     public boolean isTicking() {
@@ -153,21 +130,11 @@ public class TrafficSystem implements ConfigurationSerializable {
         return currentTick;
     }
 
-    public int getCurrentTrafficLightSystem() {
-        return currentTrafficLightSystem;
+    public int getCurrentJunctionBox() {
+        return currentJunctionBox;
     }
 
     public void stop() {
         this.stop = true;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("Name", this.name);
-        map.put("MainChunk", this.mainChunk);
-        map.put("TrafficSystemType", this.trafficSystemType.name());
-        map.put("TrafficLightSystemMap", this.trafficLightSystemMap);
-        return map;
     }
 }

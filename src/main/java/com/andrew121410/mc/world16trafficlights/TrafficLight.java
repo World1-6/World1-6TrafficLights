@@ -7,16 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@SerializableAs("TrafficLight")
-public class TrafficLight implements ConfigurationSerializable {
+// https://mcutils.com/banner-creator
+public class TrafficLight {
 
     private final Location location;
     private Boolean isLeft;
@@ -28,10 +24,6 @@ public class TrafficLight implements ConfigurationSerializable {
     public TrafficLight(Location location, boolean isLeft) {
         this.location = location;
         this.isLeft = isLeft;
-    }
-
-    public static TrafficLight deserialize(Map<String, Object> map) {
-        return new TrafficLight((Location) map.get("Location"), (Boolean) map.get("IsLeft"));
     }
 
     public boolean doLight(TrafficLightState trafficLightState) {
@@ -72,7 +64,8 @@ public class TrafficLight implements ConfigurationSerializable {
         if (isBanner()) {
             Banner banner = (Banner) location.getBlock().getState();
             List<Pattern> patterns = new ArrayList<>();
-            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.GLOBE)); // CIRCLE_MIDDLE
+            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.CIRCLE));
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.BORDER));
             banner.setPatterns(patterns);
             banner.update();
         } else {
@@ -96,9 +89,26 @@ public class TrafficLight implements ConfigurationSerializable {
         return true;
     }
 
-    //TODO add turn_left
     public boolean turn_left() {
-        return yellow();
+        if (isBanner()) {
+            Banner banner = (Banner) location.getBlock().getState();
+            banner.setBaseColor(DyeColor.BLACK);
+            List<Pattern> patterns = new ArrayList<>();
+
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.BASE)); // This is still needed
+            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.RHOMBUS));
+            patterns.add(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_RIGHT));
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.SQUARE_TOP_RIGHT));
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.SQUARE_BOTTOM_RIGHT));
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.BORDER));
+
+            banner.setPatterns(patterns);
+            banner.update();
+        } else {
+            yellow(); // Use yellow as default for non-banner blocks
+        }
+
+        return true;
     }
 
     //TODO add turn_right
@@ -110,9 +120,11 @@ public class TrafficLight implements ConfigurationSerializable {
         if (isBanner()) {
             Banner banner = (Banner) location.getBlock().getState();
             banner.setBaseColor(DyeColor.BLACK);
-            for (int i = 0; i < banner.getPatterns().size(); i++) {
-                banner.removePattern(i);
-            }
+
+            // Make a blank banner
+            List<Pattern> patterns = new ArrayList<>();
+            patterns.add(new Pattern(DyeColor.BLACK, PatternType.BASE));
+            banner.setPatterns(patterns);
             banner.update();
         } else {
             location.getBlock().setType(Material.BLACK_CONCRETE);
@@ -126,13 +138,5 @@ public class TrafficLight implements ConfigurationSerializable {
 
     public Boolean isLeft() {
         return isLeft;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("Location", this.location);
-        map.put("IsLeft", isLeft);
-        return map;
     }
 }
